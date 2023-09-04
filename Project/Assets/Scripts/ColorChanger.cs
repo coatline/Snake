@@ -21,17 +21,14 @@ public class ColorChanger : MonoBehaviour
         if (direction == -1 && colorInt == 0)
         {
             colorInt = colors.Length - 1;
-            print("Going to end of array");
         }
-        else if (direction == 1 && colorInt == colors.Length)
+        else if (direction == 1 && colorInt == colors.Length - 1)
         {
             colorInt = 0;
-            print("going to begginig of array");
         }
         else
         {
             colorInt += direction;
-            print("Normal iteration");
         }
 
         GameHandler.snakeColor = colors[colorInt];

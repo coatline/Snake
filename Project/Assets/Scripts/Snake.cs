@@ -135,26 +135,39 @@ public class Snake : MonoBehaviour
         state = State.Dead;
     }
 
+    Vector2Int GetMoveDir()
+    {
+        Vector2Int gridMovePositionVector;
+        switch (gridMoveDirection)
+        {
+            default:
+            case Direction.Right: gridMovePositionVector = new Vector2Int(-1, 0); break;
+            case Direction.Left: gridMovePositionVector = new Vector2Int(1, 0); break;
+            case Direction.Up: gridMovePositionVector = new Vector2Int(0, 1); break;
+            case Direction.Down: gridMovePositionVector = new Vector2Int(0, -1); break;
+        }
+        return gridMovePositionVector;
+    }
+
     private void HandleGridMovement()
     {
         gridMoveTimer += Time.deltaTime;
-
 
         if (gridMoveTimer > gridMoveTimerMax)
         {
             gridMoveTimer -= gridMoveTimerMax;
             canChangeDir = true;
 
+            Vector2Int oldGridPos = gridposition;
             if (!GameHandler.wallMode)
             {
-                gridposition = levelGrid.ValidateGridPosition(gridposition, isWrapping);
+                gridposition = levelGrid.ValidateGridPosition(gridposition + GetMoveDir(), isWrapping);
                 isWrapping = levelGrid.GetSnakeIsWrapping();
             }
             else
             {
                 levelGrid.TryGetOnWall(gridposition);
             }
-
 
             SnakeMovePosition previousSnakeMovePosition = null;
 
@@ -163,32 +176,17 @@ public class Snake : MonoBehaviour
                 previousSnakeMovePosition = snakeMovePositionList[0];
             }
 
-            SnakeMovePosition snakeMovePosition = new SnakeMovePosition(previousSnakeMovePosition, gridposition, gridMoveDirection, snakeBodyPartList, levelGrid);
+            SnakeMovePosition snakeMovePosition = new SnakeMovePosition(previousSnakeMovePosition, oldGridPos, gridMoveDirection, snakeBodyPartList, levelGrid);
 
             snakeMovePositionList.Insert(0, snakeMovePosition);
 
-            Vector2Int gridMovePositionVector;
-            switch (gridMoveDirection)
-            {
-                default:
-                case Direction.Right: gridMovePositionVector = new Vector2Int(-1, 0); break;
-                case Direction.Left: gridMovePositionVector = new Vector2Int(1, 0); break;
-                case Direction.Up: gridMovePositionVector = new Vector2Int(0, 1); break;
-                case Direction.Down: gridMovePositionVector = new Vector2Int(0, -1); break;
-            }
-
-            gridposition += gridMovePositionVector;
-
-
-
-
-
+            //if (isWrapping == false)
+            //    gridposition += GetMoveDir();
 
             //for (int i = snakeBodyPartList.Count - 1; i >= 0; i--)
             //{
             //    snakeBodyPartList[i].SetSnakeMovePosition(snakeMovePosition, isWrapping);
             //}
-
 
             foreach (SnakeBodyPart snakeBodyPart in snakeBodyPartList)
             {
@@ -214,7 +212,6 @@ public class Snake : MonoBehaviour
                 snakeBodyPartList.RemoveAt(snakeMovePositionList.Count - 1);
             }
 
-            UpdateSnakeBodyParts();
 
             if (isWrapping)
             {
@@ -223,8 +220,10 @@ public class Snake : MonoBehaviour
             else
             {
                 Vector3 gridPos = new Vector3(gridposition.x, gridposition.y);
-                transform.position = Vector3.Lerp(transform.position, gridPos, .5f);
+                //transform.position = Vector3.Lerp(transform.position, gridPos, .5f);
+                transform.position = gridPos;
             }
+            UpdateSnakeBodyParts();
 
             if (snakeBodyPartList.Count == 0)
             {
@@ -232,19 +231,7 @@ public class Snake : MonoBehaviour
                 levelGrid.SetSnakeIsWrapping(false);
             }
 
-            transform.eulerAngles = new Vector3(0, 0, GetAngleFromVector(gridMovePositionVector) - 90);
-
-
-            //for (int i = snakeBodyPartList.Count - 1; i >= 0; i--)
-            //{
-            //    for(int j = snakeBodyPartList.Count - 1; j >= 0; j--)
-            //    {
-
-            //    snakeBodyPartList[i].SetSnakeMovePosition(snakeMovePositionList[j], isWrapping);
-            //    }
-            //}
-            //isWrapping = false;
-
+            transform.eulerAngles = new Vector3(0, 0, GetAngleFromVector(GetMoveDir()) - 90);
         }
 
     }
@@ -322,8 +309,9 @@ public class Snake : MonoBehaviour
             else if (!isWrapping)
             {
                 Vector3 gridPos = new Vector3(snakeMovePosition.GridPosition.x, snakeMovePosition.GridPosition.y);
+                transform.position = new Vector3(gridPos.x, gridPos.y, 0);
 
-                transform.position = Vector3.Lerp(transform.position, gridPos, .5f);
+                //transform.position = Vector3.Lerp(transform.position, gridPos, .5f);
             }
 
             float angle;
