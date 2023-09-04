@@ -94,7 +94,7 @@ public class Snake : MonoBehaviour
     {
         if (canChangeDir != false)
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
             {
                 if (gridMoveDirection != Direction.Down || snakeBodySize == 0)
                 {
@@ -102,7 +102,7 @@ public class Snake : MonoBehaviour
                     canChangeDir = false;
                 }
             }
-            if (Input.GetKeyDown(KeyCode.DownArrow))
+            if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
             {
                 if (gridMoveDirection != Direction.Up || snakeBodySize == 0)
                 {
@@ -110,7 +110,7 @@ public class Snake : MonoBehaviour
                     canChangeDir = false;
                 }
             }
-            if (Input.GetKeyDown(KeyCode.RightArrow))
+            if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             {
                 if (gridMoveDirection != Direction.Right || snakeBodySize == 0)
                 {
@@ -118,7 +118,7 @@ public class Snake : MonoBehaviour
                     canChangeDir = false;
                 }
             }
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
             {
                 if (gridMoveDirection != Direction.Left || snakeBodySize == 0)
                 {
